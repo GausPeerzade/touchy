@@ -22,6 +22,31 @@ import TouchyCore
     #expect(t.apply(-5).level == 0)
 }
 
+@Test func clicksOnStepsAndEndsWithoutBuzzing() {
+    var t = LevelTracker(value: 0.53) // steps are 1/16 = 0.0625 apart
+    let path: [(Float, Haptic?)] = [
+        (0.04, .step),  // 0.57 crosses 0.5625
+        (-0.01, nil),   // finger resting on that boundary: no repeat clicks
+        (0.01, nil),
+        (-0.10, .step), // 0.47 crosses it back and 0.5, the new one clicks
+        (0.50, .step),  // 0.97, several steps in one frame is a single click
+        (0.10, .end),   // pinned at 1
+        (0.10, nil),    // pushing past the end
+        (-0.01, nil),   // jitter at the end doesn't re-fire the firm click
+        (0.01, nil),
+        (-2, .end),     // all the way down
+    ]
+    for (i, (delta, expected)) in path.enumerated() {
+        #expect(t.apply(delta).haptic == expected, "step \(i)")
+    }
+    // Starting exactly on a boundary: leaving it is silent, crossing the next one clicks.
+    for start: Float in [1, 0.5] {
+        var s = LevelTracker(value: start)
+        #expect(s.apply(-0.01).haptic == nil)
+        #expect(s.apply(-0.06).haptic == .step)
+    }
+}
+
 @Test(arguments: [Float(0), 0.5, 1])
 func upwardMoveUnmutesOnceAtAnyLevel(start: Float) {
     // Downward never unmutes.

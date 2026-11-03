@@ -15,7 +15,8 @@ struct Levels {
             if let control { showLevel(control, tracker.value) }
         }
         guard control == adjustment.control else { return }
-        let (level, unmute) = tracker.apply(adjustment.delta)
+        let (level, unmute, haptic) = tracker.apply(adjustment.delta)
+        if let haptic { TPHaptic(haptic == .end) }
         if let level { showLevel(adjustment.control, level) }
         if control == .brightness {
             if let level { TPSetBrightness(level) }

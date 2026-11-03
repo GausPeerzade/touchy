@@ -23,6 +23,7 @@ Touchy lives in the menu bar and stays out of the way. I wanted it to be as ligh
 
 - **Smooth control:** levels follow your finger instead of jumping in 1/16 steps like the keyboard keys.
 - **Stays out of your way:** a swipe only counts if one finger lands right on the edge and moves up or down. Clicks, normal cursor moves, horizontal drags and two-finger scrolls are ignored.
+- **Haptic clicks:** the trackpad gives a light click at each of 16 steps (the same steps as the keyboard keys) and a firmer one when you hit 0% or 100%. Turn it off from the menu bar.
 - **On-screen level bar:** a small bar in the top-right corner shows the level while you swipe, then fades out. Its window is freed once it's hidden.
 - **Unmutes for you:** swiping up on the right edge turns sound back on if it's muted.
 - **Launch at login:** turn it on from the menu bar.
@@ -55,6 +56,7 @@ Since you build it yourself, macOS won't show the "unidentified developer" warni
 Click the ✋ icon in the menu bar for:
 
 - **Enabled:** pause or resume Touchy.
+- **Haptic Feedback:** turn the trackpad clicks on or off.
 - **Launch at Login:** start Touchy automatically when you log in.
 - **Quit Touchy**
 
@@ -69,6 +71,7 @@ Quit Touchy from the menu bar, then delete `/Applications/Touchy.app`. If you tu
 - **Trackpad input:** raw finger positions come from Apple's private `MultitouchSupport` framework. That's how tools like BetterTouchTool read the trackpad, and it doesn't need Accessibility permission.
 - **Brightness** is set through the private `DisplayServices` framework.
 - **Volume** is set through CoreAudio on the default output device.
+- **Haptics** use the Force Touch trackpad's actuator from the same `MultitouchSupport` framework. On trackpads without one, the clicks are simply skipped.
 - **Level bar:** recent macOS versions moved the system volume/brightness overlay into Control Center, so Touchy draws its own small one.
 
 Both private frameworks are loaded at runtime with `dlopen`. If a future macOS removes them or their functions, Touchy turns itself off (the icon greys out) instead of crashing.

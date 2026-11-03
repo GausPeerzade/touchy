@@ -32,6 +32,10 @@ void TPStop(void);
 // True once after each TPStart, so the callback thread can drop state from a previous session.
 bool TPTakeReset(void);
 
+// Clicks the trackpad's haptic engine. Safe to call from the callback thread; no-op if unsupported.
+void TPHaptic(bool strong);
+void TPSetHapticsEnabled(bool on);
+
 // Built-in display brightness (0...1). Get also caches the display that Set writes to.
 bool TPGetBrightness(float *value);
 void TPSetBrightness(float value);

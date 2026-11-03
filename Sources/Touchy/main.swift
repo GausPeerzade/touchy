@@ -29,16 +29,21 @@ private let onFrame: MTFrameCallback = { _, touches, count, _, _ in
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     private let enabledItem = NSMenuItem(title: "Enabled", action: #selector(toggleEnabled), keyEquivalent: "")
+    private let hapticsItem = NSMenuItem(title: "Haptic Feedback", action: #selector(toggleHaptics), keyEquivalent: "")
     private let loginItem = NSMenuItem(title: "Launch at Login", action: #selector(toggleLogin), keyEquivalent: "")
     private var enabled = UserDefaults.standard.object(forKey: "enabled") as? Bool ?? true {
         didSet { UserDefaults.standard.set(enabled, forKey: "enabled") }
+    }
+    private var haptics = UserDefaults.standard.object(forKey: "haptics") as? Bool ?? true {
+        didSet { UserDefaults.standard.set(haptics, forKey: "haptics"); TPSetHapticsEnabled(haptics) }
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItem.button?.image = NSImage(systemSymbolName: "hand.draw", accessibilityDescription: "Touchy")
         let menu = NSMenu()
         menu.delegate = self
-        for item in [enabledItem, loginItem] {
+        TPSetHapticsEnabled(haptics)
+        for item in [enabledItem, hapticsItem, loginItem] {
             item.target = self
             menu.addItem(item)
         }
@@ -57,6 +62,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     func menuNeedsUpdate(_ menu: NSMenu) {
         enabledItem.state = enabled ? .on : .off
+        hapticsItem.state = haptics ? .on : .off
         loginItem.state = SMAppService.mainApp.status == .enabled ? .on : .off
     }
 
@@ -69,6 +75,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc private func toggleEnabled() {
         enabled.toggle()
         restart()
+    }
+
+    @objc private func toggleHaptics() {
+        haptics.toggle()
     }
 
     @objc private func toggleLogin() {
